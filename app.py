@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 # Load model
-with open('model_telecom/rf_model.pkl', 'rb') as file:
+with open('rf_model.pkl', 'rb') as file:
     model = pickle.load(file)
 
 # Title
