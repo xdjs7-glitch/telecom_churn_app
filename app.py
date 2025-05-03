@@ -45,37 +45,24 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
 # ========== Dashboard ==========
-import plotly.graph_objects as go
-
 with tab1:
     st.subheader("📊 Churn Insights Dashboard")
 
-    # Plotly Donut Chart
+    # PIE CHART - Churn Distribution
     churn_counts = df['Churn'].value_counts()
-    labels = ["No Churn", "Churn"]
-    values = [churn_counts[0], churn_counts[1]]
-
-    fig = go.Figure(
-        data=[go.Pie(
-            labels=labels,
-            values=values,
-            hole=0.5,
-            marker=dict(colors=["green", "red"]),
-            textinfo="percent+label",
-            insidetextorientation="radial"
-        )]
+    fig1, ax1 = plt.subplots(figsize=(2.5, 2.5), dpi=100)
+    wedges, texts, autotexts = ax1.pie(
+        churn_counts,
+        labels=["No Churn", "Churn"],
+        autopct='%1.1f%%',
+        startangle=90,
+        wedgeprops=dict(width=0.3),
+        textprops=dict(color="white", fontsize=8),
+        colors=['#2ca02c', '#d62728']
     )
-
-    fig.update_layout(
-        width=250,
-        height=250,
-        margin=dict(t=0, b=0, l=0, r=0),
-        paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
-        font=dict(color="white", size=12)
-    )
-
-    st.plotly_chart(fig, use_container_width=False)
-
+    ax1.set(aspect="equal")
+    fig1.patch.set_alpha(0.0)
+    st.pyplot(fig1, clear_figure=True)
 
     # BARPLOT - Customer Service Calls vs Churn
     st.markdown("#### 📞 Customer Service Calls vs Churn")
