@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="DropAlertAI", layout="wide")
 
 # Load model
-model = joblib.load('model_telecom/rf_model.pkl')
+model = joblib.load('rf_model.pkl')
 
 # Load data
 df = pd.read_csv('telecom_churn.csv')
