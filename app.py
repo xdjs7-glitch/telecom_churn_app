@@ -50,7 +50,7 @@ with tab1:
 
     # Pie Chart: Churn Distribution
     churn_counts = df['Churn'].value_counts()
-    fig1, ax1 = plt.subplots(figsize=(4, 4))
+    fig1, ax1 = plt.subplots(figsize=(1, 1))
     wedges, texts, autotexts = ax1.pie(
         churn_counts,
         labels=["No Churn", "Churn"],
