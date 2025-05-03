@@ -48,32 +48,39 @@ tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 with tab1:
     st.subheader("📊 Churn Insights Dashboard")
 
+    # Pie Chart: Churn Distribution
     churn_counts = df['Churn'].value_counts()
-    fig1, ax1 = plt.subplots()
-    ax1.pie(
+    fig1, ax1 = plt.subplots(figsize=(4, 4))
+    wedges, texts, autotexts = ax1.pie(
         churn_counts,
         labels=["No Churn", "Churn"],
         autopct='%1.1f%%',
         startangle=90,
-        colors=['#66b3ff', '#ff6666']
+        wedgeprops=dict(width=0.4),
+        textprops=dict(color="white"),
+        colors=['#2ca02c', '#d62728']
     )
-    ax1.set_title("Churn Distribution")
+    ax1.set(aspect="equal", title="Churn Distribution")
+    fig1.patch.set_alpha(0.0)
     st.pyplot(fig1)
 
-    st.subheader("📞 Customer Service Calls vs Churn")
-    fig2, ax2 = plt.subplots()
-    sns.barplot(x="CustServCalls", y="Churn", data=df, palette="rocket", ax=ax2)
-    st.pyplot(fig2)
-
+    
+    # Boxplot: Data Usage
     st.subheader("📶 Data Usage by Churn")
-    fig3, ax3 = plt.subplots()
-    sns.boxplot(x="Churn", y="DataUsage", data=df, palette="coolwarm", ax=ax3)
+    fig3, ax3 = plt.subplots(figsize=(6, 4))
+    sns.boxplot(x="Churn", y="DataUsage", data=df, palette="Set2", ax=ax3)
+    ax3.set_facecolor('none')
+    fig3.patch.set_alpha(0.0)
     st.pyplot(fig3)
 
+    # Histogram: Monthly Charges
     st.subheader("💳 Monthly Charges by Churn")
-    fig4, ax4 = plt.subplots()
-    sns.histplot(data=df, x="MonthlyCharge", hue="Churn", multiple="stack", kde=True, ax=ax4)
+    fig4, ax4 = plt.subplots(figsize=(6, 4))
+    sns.histplot(data=df, x="MonthlyCharge", hue="Churn", multiple="stack", kde=True, palette="coolwarm", ax=ax4)
+    ax4.set_facecolor('none')
+    fig4.patch.set_alpha(0.0)
     st.pyplot(fig4)
+
 
 # ========== Predict ==========
 with tab2:
