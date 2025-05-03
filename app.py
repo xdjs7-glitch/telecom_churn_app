@@ -77,16 +77,26 @@ with tab1:
     st.plotly_chart(fig, use_container_width=False)
 
 
-    # BARPLOT - Customer Service Calls vs Churn
-    st.markdown("#### 📞 Customer Service Calls vs Churn")
-    fig2, ax2 = plt.subplots(figsize=(3, 2), dpi=100)
-    sns.barplot(x="CustServCalls", y="Churn", data=df, palette="viridis", ax=ax2)
-    ax2.set_xlabel("CustServCalls", fontsize=8)
-    ax2.set_ylabel("Churn", fontsize=8)
-    ax2.tick_params(axis='both', labelsize=7)
-    fig2.tight_layout()
-    fig2.patch.set_alpha(0.0)
-    st.pyplot(fig2, clear_figure=True)
+    # Bar plot with Plotly
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    x=df['Data Plan'].value_counts().index.astype(str),
+    y=df['Data Plan'].value_counts().values,
+    marker_color='lightskyblue'
+))
+fig.update_layout(
+    title='Data Plan Distribution',
+    xaxis_title='Data Plan',
+    yaxis_title='Count',
+    template='plotly_dark',
+    width=400,
+    height=300,
+    margin=dict(t=30, b=0, l=0, r=0),
+    paper_bgcolor='rgba(0,0,0,0)',
+    font=dict(color='white')
+)
+st.plotly_chart(fig, use_container_width=False)
+
 
     # BOXPLOT - Data Usage by Churn
     st.markdown("#### 📶 Data Usage by Churn")
