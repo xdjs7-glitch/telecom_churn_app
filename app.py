@@ -38,3 +38,12 @@ if st.button("Predict"):
     prediction = model.predict(input_data)
     result = "⚠️ Customer is likely to churn." if prediction[0] == 1 else "✅ Customer is not likely to churn."
     st.success(result)
+    # Hide Streamlit default menu and footer
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
