@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.graph_objects as go
 
 # Load model
 model = joblib.load("rf_model.pkl")
@@ -46,40 +47,31 @@ tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
 # ========== Dashboard ==========
 with tab1:
-    st.subheader("📊 Churn Insights Dashboard")
-
-    # Pie Chart: Churn Distribution
-    churn_counts = df['Churn'].value_counts()
-    fig1, ax1 = plt.subplots(figsize=(4, 14))
-    wedges, texts, autotexts = ax1.pie(
-        churn_counts,
-        labels=["No Churn", "Churn"],
-        autopct='%1.1f%%',
-        startangle=90,
-        wedgeprops=dict(width=0.4),
-        textprops=dict(color="white"),
-        colors=['#2ca02c', '#d62728']
-    )
-    ax1.set(aspect="equal", title="Churn Distribution")
-    fig1.patch.set_alpha(0.0)
-    st.pyplot(fig1)
-
+    st.title("📊 Dashboard - DropAlertAI")
     
-    # Boxplot: Data Usage
-    st.subheader("📶 Data Usage by Churn")
-    fig3, ax3 = plt.subplots(figsize=(6, 4))
-    sns.boxplot(x="Churn", y="DataUsage", data=df, palette="Set2", ax=ax3)
-    ax3.set_facecolor('none')
-    fig3.patch.set_alpha(0.0)
-    st.pyplot(fig3)
+    churn_counts = df['Churn'].value_counts()
+    churn_labels = ['No Churn', 'Churn']
+    churn_values = [churn_counts[0], churn_counts[1]]
+    churn_colors = ['green', 'red']
 
-    # Histogram: Monthly Charges
-    st.subheader("💳 Monthly Charges by Churn")
-    fig4, ax4 = plt.subplots(figsize=(6, 4))
-    sns.histplot(data=df, x="MonthlyCharge", hue="Churn", multiple="stack", kde=True, palette="coolwarm", ax=ax4)
-    ax4.set_facecolor('none')
-    fig4.patch.set_alpha(0.0)
-    st.pyplot(fig4)
+    # Pie Chart
+    fig_pie = go.Figure(data=[go.Pie(
+        labels=churn_labels,
+        values=churn_values,
+        hole=0.5,
+        marker=dict(colors=churn_colors),
+        textinfo='label+percent',
+        insidetextfont=dict(color='white', size=12),
+    )])
+    fig_pie.update_layout(
+        title="Churn Distribution",
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        height=350, width=350,
+        margin=dict(l=10, r=10, t=40, b=10)
+    )
+    st.plotly_chart(fig_pie, use_container_width=False)
+
 
 
 # ========== Predict ==========
