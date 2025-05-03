@@ -86,7 +86,7 @@ with col1:
     st.plotly_chart(fig_pie, use_container_width=False)
 
 with col2:
-    st.markdown(f"""
+    churn_text = f"""
         <div style='padding-top: 40px; font-size: 17px; color: white; line-height: 1.6;'>
             <p>
             Based on the dataset collected, we observed that a significant majority of customers—<strong>{churn_percent[0]}%</strong> (<strong>{churn_values[0]}</strong> individuals)—have <span style="color: green;"><strong>remained loyal</strong></span> and did not cancel their services.
@@ -98,8 +98,8 @@ with col2:
             These insights highlight the importance of identifying early warning signs of churn and developing targeted retention campaigns to reduce customer loss and improve overall satisfaction.
             </p>
         </div>
-    """, unsafe_allow_html=True)
-
+    """
+    st.markdown(churn_text, unsafe_allow_html=True)
 
 # ========== Predict ==========
 with tab2:
