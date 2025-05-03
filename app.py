@@ -52,7 +52,7 @@ with tab1:
     churn_counts = df['Churn'].value_counts()
     churn_labels = ['No Churn', 'Churn']
     churn_values = [churn_counts[0], churn_counts[1]]
-    churn_colors = ['green', 'red']
+    churn_colors = ['purple', 'white']
 
     # Pie Chart
     fig_pie = go.Figure(data=[go.Pie(
@@ -72,22 +72,7 @@ with tab1:
     )
     st.plotly_chart(fig_pie, use_container_width=False)
 
-# Bar Chart: Mean account weeks per churn status
-    avg_weeks = df.groupby('Churn')['Account Weeks'].mean()
-    fig_bar = go.Figure(data=[
-        go.Bar(x=['No Churn', 'Churn'], y=avg_weeks, marker_color=['green', 'red'])
-    ])
-    fig_bar.update_layout(
-        title="Average Account Weeks by Churn",
-        xaxis_title="Churn Status",
-        yaxis_title="Avg Account Weeks",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='white'),
-        height=400,
-        margin=dict(l=40, r=40, t=40, b=40)
-    )
-    st.plotly_chart(fig_bar, use_container_width=True)
+
 
 # ========== Predict ==========
 with tab2:
