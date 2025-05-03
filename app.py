@@ -52,7 +52,7 @@ with tab1:
     churn_counts = df['Churn'].value_counts()
     churn_labels = ['No Churn', 'Churn']
     churn_values = [churn_counts[0], churn_counts[1]]
-    churn_colors = ['purple', 'white']
+    churn_colors = ['purple', 'pink']
 
     # Pie Chart
     fig_pie = go.Figure(data=[go.Pie(
