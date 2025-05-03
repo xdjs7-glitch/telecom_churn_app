@@ -48,30 +48,39 @@ tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 # ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
-    
-    churn_counts = df['Churn'].value_counts()
-    churn_labels = ['No Churn', 'Churn']
-    churn_values = [churn_counts[0], churn_counts[1]]
-    churn_colors = ['purple', 'pink']
 
-    # Pie Chart
-    fig_pie = go.Figure(data=[go.Pie(
-        labels=churn_labels,
-        values=churn_values,
-        hole=0.5,
-        marker=dict(colors=churn_colors),
-        textinfo='label+percent',
-        insidetextfont=dict(color='white', size=12),
-    )])
-    fig_pie.update_layout(
-        title="Churn Distribution",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        height=350, width=350,
-        margin=dict(l=10, r=10, t=40, b=10)
+churn_counts = df['Churn'].value_counts()
+churn_labels = ['No Churn', 'Churn']
+churn_values = [churn_counts[0], churn_counts[1]]
+churn_colors = ['purple', 'pink']
+
+# Pie Chart
+fig_pie = go.Figure(data=[go.Pie(
+    labels=churn_labels,
+    values=churn_values,
+    hole=0.5,
+    marker=dict(colors=churn_colors),
+    textinfo='label+percent',
+    insidetextfont=dict(color='white', size=14),  # increased font size
+    outsidetextfont=dict(color='white', size=14)  # outside text white too
+)])
+
+fig_pie.update_layout(
+    title=dict(
+        text="Churn Distribution",
+        font=dict(color='white', size=20)  # white title text
+    ),
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',
+    height=400,  # slightly bigger
+    width=400,
+    margin=dict(l=10, r=10, t=40, b=10),
+    legend=dict(
+        font=dict(color='white')  # white legend text
     )
-    st.plotly_chart(fig_pie, use_container_width=False)
+)
 
+st.plotly_chart(fig_pie, use_container_width=False)
 
 
 # ========== Predict ==========
