@@ -1,115 +1,140 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import plotly.graph_objects as go
-
-# Set page config
-st.set_page_config(page_title="DropAlertAI", layout="wide")
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load model
-model = joblib.load('rf_model.pkl')
+model = joblib.load("rf_model.pkl")
 
-# Load data
-df = pd.read_csv('telecom_churn.csv')
+# Load dataset
+@st.cache_data
+def load_data():
+    return pd.read_csv("telecom_churn.csv")
 
-# Custom CSS for white labels and dark background
+df = load_data()
+
+# Page config
+st.set_page_config(page_title="DropAlertAI", layout="wide")
+
+# Custom dark theme styling
 st.markdown("""
     <style>
-    body {
-        background-color: #1e1e1e;
-    }
-    .stTextInput > div > div > input, .stSelectbox > div > div {
-        color: white !important;
-    }
-    label, .stSlider, .stRadio label {
-        color: white !important;
-        font-weight: bold;
-    }
+        .stApp { background-color: #1e1e1e; color: white; }
+        label, .css-1cpxqw2, .css-1p05t8e, .css-1y4p8pa { color: white !important; }
+        .stTabs [role="tab"] {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+        }
+        .stTabs [role="tab"]:hover {
+            background-color: #444;
+        }
+        .stTabs [role="tab"][aria-selected="true"] {
+            background-color: #555;
+            color: white;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Tabs for navigation
-tab1, tab2 = st.tabs(["📊 Dashboard", "🧠 Predict"])
+# App title
+st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 
-# ----------------- Dashboard -----------------
+# Create tabs
+tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
+
+# ========== Dashboard ==========
+import plotly.graph_objects as go
+
 with tab1:
-    st.title("📊 Dashboard - DropAlertAI")
-    
+    st.subheader("📊 Churn Insights Dashboard")
+
+    # Plotly Donut Chart
     churn_counts = df['Churn'].value_counts()
-    churn_labels = ['No Churn', 'Churn']
-    churn_values = [churn_counts[0], churn_counts[1]]
-    churn_colors = ['green', 'red']
+    labels = ["No Churn", "Churn"]
+    values = [churn_counts[0], churn_counts[1]]
 
-    # Pie Chart
-    fig_pie = go.Figure(data=[go.Pie(
-        labels=churn_labels,
-        values=churn_values,
-        hole=0.5,
-        marker=dict(colors=churn_colors),
-        textinfo='label+percent',
-        insidetextfont=dict(color='white', size=12),
-    )])
-    fig_pie.update_layout(
-        title="Churn Distribution",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        height=350, width=350,
-        margin=dict(l=10, r=10, t=40, b=10)
+    fig = go.Figure(
+        data=[go.Pie(
+            labels=labels,
+            values=values,
+            hole=0.5,
+            marker=dict(colors=["green", "red"]),
+            textinfo="percent+label",
+            insidetextorientation="radial"
+        )]
     )
-    st.plotly_chart(fig_pie, use_container_width=False)
 
-    # Bar Chart: Mean account weeks per churn status
-    avg_weeks = df.groupby('Churn')['Account Weeks'].mean()
-    fig_bar = go.Figure(data=[
-        go.Bar(x=['No Churn', 'Churn'], y=avg_weeks, marker_color=['green', 'red'])
-    ])
-    fig_bar.update_layout(
-        title="Average Account Weeks by Churn",
-        xaxis_title="Churn Status",
-        yaxis_title="Avg Account Weeks",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='white'),
-        height=400,
-        margin=dict(l=40, r=40, t=40, b=40)
+    fig.update_layout(
+        width=250,
+        height=250,
+        margin=dict(t=0, b=0, l=0, r=0),
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
+        font=dict(color="white", size=12)
     )
-    st.plotly_chart(fig_bar, use_container_width=True)
 
-# ----------------- Predict -----------------
+    st.plotly_chart(fig, use_container_width=False)
+
+
+    # Bar plot with Plotly
+
+
+    # BOXPLOT - Data Usage by Churn
+    st.markdown("#### 📶 Data Usage by Churn")
+    fig3, ax3 = plt.subplots(figsize=(3, 2), dpi=100)
+    sns.boxplot(x="Churn", y="DataUsage", data=df, palette="Set2", ax=ax3)
+    ax3.set_xlabel("Churn", fontsize=8)
+    ax3.set_ylabel("Data Usage", fontsize=8)
+    ax3.tick_params(axis='both', labelsize=7)
+    fig3.tight_layout()
+    fig3.patch.set_alpha(0.0)
+    st.pyplot(fig3, clear_figure=True)
+
+    # HISTOGRAM - Monthly Charges by Churn
+    st.markdown("#### 💳 Monthly Charges by Churn")
+    fig4, ax4 = plt.subplots(figsize=(3, 2), dpi=100)
+    sns.histplot(data=df, x="MonthlyCharge", hue="Churn", multiple="stack", kde=True, palette="coolwarm", ax=ax4)
+    ax4.set_xlabel("Monthly Charge", fontsize=8)
+    ax4.set_ylabel("Count", fontsize=8)
+    ax4.tick_params(axis='both', labelsize=7)
+    fig4.tight_layout()
+    fig4.patch.set_alpha(0.0)
+    st.pyplot(fig4, clear_figure=True)
+
+
+# ========== Predict ==========
 with tab2:
-    st.title("🧠 Predict Churn")
+    st.subheader("🔍 Predict Churn")
 
-    st.markdown("### Enter customer information:")
-
-    # Inputs
-    account_weeks = st.slider("Account Weeks", min_value=1, max_value=300, value=100)
-    contract_renewal = st.selectbox("Contract Renewal", ['Yes', 'No'])
-    data_plan = st.selectbox("Data Plan", ['Yes', 'No'])
-    data_usage = st.number_input("Data Usage (GB)", min_value=0.0, value=1.0)
-    cust_care_calls = st.number_input("Customer Care Calls", min_value=0, value=1)
-    day_mins = st.number_input("Day Minutes", min_value=0.0, value=100.0)
-    day_calls = st.number_input("Day Calls", min_value=0, value=50)
-    monthly_charge = st.number_input("Monthly Charge", min_value=0.0, value=50.0)
-    overage_fee = st.number_input("Overage Fee", min_value=0.0, value=5.0)
-    roaming_mins = st.number_input("Roaming Minutes", min_value=0.0, value=0.0)
-
-    # Convert Yes/No to 1/0
-    contract_renewal = 1 if contract_renewal == 'Yes' else 0
-    data_plan = 1 if data_plan == 'Yes' else 0
+    # Input fields
+    account_weeks = st.slider("Account Weeks", 0, 300, 100)
+    contract_renewal = st.selectbox("Contract Renewal", ["Yes", "No"])
+    data_plan = st.selectbox("Data Plan", ["Yes", "No"])
+    data_usage = st.number_input("Data Usage (GB)", min_value=0.0, format="%.2f")
+    cust_serv_calls = st.number_input("Customer Service Calls", min_value=0)
+    day_mins = st.number_input("Day Minutes", min_value=0.0, format="%.2f")
+    day_calls = st.number_input("Day Calls", min_value=0)
+    monthly_charge = st.number_input("Monthly Charge ($)", min_value=0.0, format="%.2f")
+    overage_fee = st.number_input("Overage Fee ($)", min_value=0.0, format="%.2f")
+    roam_mins = st.number_input("Roaming Minutes", min_value=0.0, format="%.2f")
 
     if st.button("Predict"):
-        input_data = [[
-            account_weeks, contract_renewal, data_plan, data_usage,
-            cust_care_calls, day_mins, day_calls, monthly_charge,
-            overage_fee, roaming_mins
+        features = [[
+            account_weeks,
+            1 if contract_renewal == "Yes" else 0,
+            1 if data_plan == "Yes" else 0,
+            data_usage,
+            cust_serv_calls,
+            day_mins,
+            day_calls,
+            monthly_charge,
+            overage_fee,
+            roam_mins
         ]]
-        prediction = model.predict(input_data)[0]
 
-        st.subheader("🔍 Prediction:")
-        if prediction == 1:
-            st.error("❌ This customer is **likely to churn**.")
-        else:
-            st.success("✅ This customer is **not likely to churn**.")
+        prediction = model.predict(features)
+        st.success("❌ Customer will churn" if prediction[0] == 1 else "✅ Customer will not churn")
 
     # Hide Streamlit default menu and footer
 hide_streamlit_style = """
