@@ -6,7 +6,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 
 # Load model
-model = joblib.load("model.pkl")
+model = joblib.load("xgb_model.pkl")
 
 # Load dataset
 @st.cache_data
@@ -98,7 +98,6 @@ with tab1:
             unsafe_allow_html=True
         )
 
-
 # ========== Predict ==========
 with tab2:
     st.subheader("🔍 Predict Churn")
@@ -106,12 +105,9 @@ with tab2:
     # Input fields
     account_weeks = st.slider("Account Weeks", 0, 300, 100)
     contract_renewal = st.selectbox("Contract Renewal", ["Yes", "No"])
-    data_plan = st.selectbox("Data Plan", ["Yes", "No"])
-    data_usage = st.number_input("Data Usage (GB)", min_value=0.0, format="%.2f")
     cust_serv_calls = st.number_input("Customer Service Calls", min_value=0)
     day_mins = st.number_input("Day Minutes", min_value=0.0, format="%.2f")
     day_calls = st.number_input("Day Calls", min_value=0)
-    monthly_charge = st.number_input("Monthly Charge ($)", min_value=0.0, format="%.2f")
     overage_fee = st.number_input("Overage Fee ($)", min_value=0.0, format="%.2f")
     roam_mins = st.number_input("Roaming Minutes", min_value=0.0, format="%.2f")
 
@@ -119,12 +115,9 @@ with tab2:
         features = [[
             account_weeks,
             1 if contract_renewal == "Yes" else 0,
-            1 if data_plan == "Yes" else 0,
-            data_usage,
             cust_serv_calls,
             day_mins,
             day_calls,
-            monthly_charge,
             overage_fee,
             roam_mins
         ]]
