@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
 import plotly.graph_objects as go
 
-# Load model and scaler
-model = joblib.load("rf2_model.pkl")
-scaler = joblib.load("scaler.pkl")  # Load the scaler you used for training
+# Load model
+model = joblib.load("model.pkl")
 
 # Load dataset
 @st.cache_data
@@ -45,6 +45,7 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 # Create tabs
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
+# ========== Dashboard ==========
 # ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
@@ -97,38 +98,38 @@ with tab1:
             unsafe_allow_html=True
         )
 
+
 # ========== Predict ==========
 with tab2:
     st.subheader("🔍 Predict Churn")
 
-    # Input fields for users
+    # Input fields
     account_weeks = st.slider("Account Weeks", 0, 300, 100)
     contract_renewal = st.selectbox("Contract Renewal", ["Yes", "No"])
+    data_plan = st.selectbox("Data Plan", ["Yes", "No"])
+    data_usage = st.number_input("Data Usage (GB)", min_value=0.0, format="%.2f")
     cust_serv_calls = st.number_input("Customer Service Calls", min_value=0)
     day_mins = st.number_input("Day Minutes", min_value=0.0, format="%.2f")
     day_calls = st.number_input("Day Calls", min_value=0)
+    monthly_charge = st.number_input("Monthly Charge ($)", min_value=0.0, format="%.2f")
     overage_fee = st.number_input("Overage Fee ($)", min_value=0.0, format="%.2f")
     roam_mins = st.number_input("Roaming Minutes", min_value=0.0, format="%.2f")
 
     if st.button("Predict"):
-        # Prepare features for prediction
         features = [[
             account_weeks,
             1 if contract_renewal == "Yes" else 0,
+            1 if data_plan == "Yes" else 0,
+            data_usage,
             cust_serv_calls,
             day_mins,
             day_calls,
+            monthly_charge,
             overage_fee,
             roam_mins
         ]]
 
-        # Scale features
-        scaled_features = scaler.transform(features)
-
-        # Make prediction
-        prediction = model.predict(scaled_features)
-
-        # Display results
+        prediction = model.predict(features)
         st.success("❌ Customer will churn" if prediction[0] == 1 else "✅ Customer will not churn")
 
     # Style the Predict button
@@ -141,7 +142,7 @@ with tab2:
         </style>
     """, unsafe_allow_html=True)
 
-# Hide Streamlit default menu and footer
+    # Hide Streamlit default menu and footer
 hide_streamlit_style = """
     <style>
     #MainMenu {visibility: hidden;}
