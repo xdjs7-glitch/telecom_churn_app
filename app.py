@@ -4,7 +4,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.graph_objects as go
-import xgboost as xgb  # Import XGBoost
+
 
 # Load model
 model = joblib.load("xgb_model.pkl")
