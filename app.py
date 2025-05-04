@@ -1,13 +1,12 @@
 import streamlit as st
 import pandas as pd
+import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.graph_objects as go
-import xgboost as xgb
 
-# Load XGBoost model
-model = xgb.XGBClassifier()
-model.load_model("xgb_model.json")  # Adjust path if needed
+# Load model
+model = joblib.load("xgb_model.pkl")
 
 # Load dataset
 @st.cache_data
@@ -46,7 +45,8 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 # Create tabs
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
-# ======= Dashboard =======
+# ========== Dashboard ==========
+# ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
 
@@ -55,7 +55,7 @@ with tab1:
     churn_values = [churn_counts[0], churn_counts[1]]
     churn_colors = ['purple', 'pink']
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 1])
 
     with col1:
         fig_pie = go.Figure(data=[go.Pie(
@@ -67,30 +67,43 @@ with tab1:
             insidetextfont=dict(color='white', size=14),
             outsidetextfont=dict(color='white', size=14)
         )])
+
         fig_pie.update_layout(
-            title=dict(text="Churn Distribution", font=dict(color='white', size=20)),
+            title=dict(
+                text="Churn Distribution",
+                font=dict(color='white', size=20)
+            ),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             height=400,
             width=400,
             margin=dict(l=10, r=10, t=40, b=10),
-            legend=dict(font=dict(color='white'))
+            legend=dict(
+                font=dict(color='white')
+            )
         )
+
         st.plotly_chart(fig_pie, use_container_width=False)
 
     with col2:
-        st.markdown("""
-        <div style="color: white; font-size: 16px; padding-top: 50px;">
-            <p><strong>Insight:</strong></p>
-            <p><strong>85.5%</strong> of customers stayed, while <strong>14.5%</strong> churned.</p>
-            <p>Understanding churn drivers helps retain customers and grow loyalty.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div style="color: white; font-size: 16px; padding-top: 50px;">
+                <p><strong>Insight:</strong></p>
+                <p>According to our dataset, <strong>85.5%</strong> (<strong>2,850</strong>) of customers have continued their subscription, indicating a strong level of customer retention.</p>
+                <p>In contrast, <strong>14.5%</strong> (<strong>483</strong>) of customers have churned, highlighting a significant portion that opted to discontinue the service.</p>
+                <p>This distribution underscores the importance of identifying key factors contributing to churn and developing targeted strategies to enhance customer satisfaction and loyalty.</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-# ======= Prediction Tab =======
+
+# ========== Predict ==========
 with tab2:
     st.subheader("🔍 Predict Churn")
 
+    # Input fields
     account_weeks = st.slider("Account Weeks", 0, 300, 100)
     contract_renewal = st.selectbox("Contract Renewal", ["Yes", "No"])
     data_plan = st.selectbox("Data Plan", ["Yes", "No"])
@@ -115,10 +128,11 @@ with tab2:
             overage_fee,
             roam_mins
         ]]
+
         prediction = model.predict(features)
         st.success("❌ Customer will churn" if prediction[0] == 1 else "✅ Customer will not churn")
 
-    # Style Predict button
+    # Style the Predict button
     st.markdown("""
         <style>
         div.stButton > button:first-child {
@@ -128,11 +142,12 @@ with tab2:
         </style>
     """, unsafe_allow_html=True)
 
-# ======= Hide Streamlit Branding =======
-st.markdown("""
+    # Hide Streamlit default menu and footer
+hide_streamlit_style = """
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
