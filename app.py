@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import plotly.graph_objects as go
 
 # Load model and scaler
-model = joblib.load("xgb_model.pkl")
+model = joblib.load("rf2_model.pkl")
 scaler = joblib.load("scaler.pkl")  # Load the scaler you used for training
 
 # Load dataset
