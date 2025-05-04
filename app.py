@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 import plotly.graph_objects as go
 
-# Load model
-model = joblib.load("rf2_model.pkl")
+# Load model and scaler
+model = joblib.load("xgb_model.pkl")
+scaler = joblib.load("scaler.pkl")  # Load the scaler you used for training
 
 # Load dataset
 @st.cache_data
@@ -45,7 +45,6 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 # Create tabs
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
-# ========== Dashboard ==========
 # ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
@@ -102,7 +101,7 @@ with tab1:
 with tab2:
     st.subheader("🔍 Predict Churn")
 
-    # Input fields
+    # Input fields for users
     account_weeks = st.slider("Account Weeks", 0, 300, 100)
     contract_renewal = st.selectbox("Contract Renewal", ["Yes", "No"])
     cust_serv_calls = st.number_input("Customer Service Calls", min_value=0)
@@ -112,6 +111,7 @@ with tab2:
     roam_mins = st.number_input("Roaming Minutes", min_value=0.0, format="%.2f")
 
     if st.button("Predict"):
+        # Prepare features for prediction
         features = [[
             account_weeks,
             1 if contract_renewal == "Yes" else 0,
@@ -122,7 +122,13 @@ with tab2:
             roam_mins
         ]]
 
-        prediction = model.predict(features)
+        # Scale features
+        scaled_features = scaler.transform(features)
+
+        # Make prediction
+        prediction = model.predict(scaled_features)
+
+        # Display results
         st.success("❌ Customer will churn" if prediction[0] == 1 else "✅ Customer will not churn")
 
     # Style the Predict button
@@ -135,7 +141,7 @@ with tab2:
         </style>
     """, unsafe_allow_html=True)
 
-    # Hide Streamlit default menu and footer
+# Hide Streamlit default menu and footer
 hide_streamlit_style = """
     <style>
     #MainMenu {visibility: hidden;}
