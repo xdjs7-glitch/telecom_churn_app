@@ -6,7 +6,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 
 # Load model
-model = joblib.load("rf_model2.pkl")
+model = joblib.load("rf2_model.pkl")
 
 # Load dataset
 @st.cache_data
