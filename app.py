@@ -4,7 +4,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.graph_objects as go
-import xgboost
+import xgboost as xgb  # Import XGBoost
 
 # Load model
 model = joblib.load("xgb_model.pkl")
@@ -46,7 +46,6 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 # Create tabs
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
-# ========== Dashboard ==========
 # ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
@@ -99,7 +98,6 @@ with tab1:
             unsafe_allow_html=True
         )
 
-
 # ========== Predict ==========
 with tab2:
     st.subheader("🔍 Predict Churn")
@@ -130,7 +128,9 @@ with tab2:
             roam_mins
         ]]
 
-        prediction = model.predict(features)
+        # Convert features to DMatrix for XGBoost
+        dmatrix = xgb.DMatrix(features)
+        prediction = model.predict(dmatrix)
         st.success("❌ Customer will churn" if prediction[0] == 1 else "✅ Customer will not churn")
 
     # Style the Predict button
