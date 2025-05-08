@@ -6,7 +6,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 
 # Load model
-model = joblib.load("stacking_model.pkl")
+model = joblib.load("model.pkl")
 
 # Load dataset
 @st.cache_data
@@ -46,7 +46,7 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
 # ========== Dashboard ==========
-
+# ========== Dashboard ==========
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
 
