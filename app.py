@@ -90,7 +90,7 @@ with tab1:
             """
             <div style="color: white; font-size: 16px; padding-top: 50px;">
                 <p><strong>Insight heeeey:</strong></p>
-                <p>According to our dataset, <strong>85.5%</strong> (<strong>2,850</strong>) of customers have continued their subscription, indicating a strong level of customer retention.</p>
+                <p>According to me to our dataset, <strong>85.5%</strong> (<strong>2,850</strong>) of customers have continued their subscription, indicating a strong level of customer retention.</p>
                 <p>In contrast, <strong>14.5%</strong> (<strong>483</strong>) of customers have churned, highlighting a significant portion that opted to discontinue the service.</p>
                 <p>This distribution underscores the importance of identifying key factors contributing to churn and developing targeted strategies to enhance customer satisfaction and loyalty.</p>
             </div>
