@@ -46,7 +46,7 @@ st.title("🚨 DropAlertAI - Telecom Churn Predictor")
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Predict"])
 
 # ========== Dashboard ==========
-# ========== Dashboard ==========
+
 with tab1:
     st.title("📊 Dashboard - DropAlertAI")
 
